@@ -1,6 +1,7 @@
 import socket
 import threading
 import pickle
+import sys
 from time import sleep
 
 
@@ -9,7 +10,7 @@ def listen(sock):
         data = sock.recv(1024)
         if data:
             msg = pickle.loads(data)
-            print(f'{msg["username"]}: {msg["text"]}')
+            display_message(msg)
 
 
 def write(sock, username):
@@ -17,6 +18,10 @@ def write(sock, username):
         text = input()
         msg = {'username': username, 'text': text}
         sock.sendall(pickle.dumps(msg))
+
+
+def display_message(msg):
+    print(f'{msg["username"]}: {msg["text"]}')
 
 
 def main():
@@ -35,11 +40,18 @@ def main():
         print(f'Welcome, {username}!')
 
         writer = threading.Thread(target=write, args=(sock, username))
+        writer.daemon = True
         writer.start()
 
         listener = threading.Thread(target=listen, args=(sock, ))
+        listener.daemon = True
         listener.start()
+        listener.join()
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print('\b\bBye!')
+        sys.exit(0)

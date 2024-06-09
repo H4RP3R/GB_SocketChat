@@ -41,6 +41,7 @@ def main():
             connections[addr] = conn
             logger.debug(f'Total connections: {len(connections)}')
             listener = threading.Thread(target=listen, args=(conn, addr))
+            listener.daemon = True
             listener.start()
 
 
