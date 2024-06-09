@@ -2,6 +2,7 @@ import socket
 import threading
 import pickle
 import sys
+import argparse
 from time import sleep
 
 
@@ -24,13 +25,24 @@ def display_message(msg):
     print(f'{msg["username"]}: {msg["text"]}')
 
 
+def get_arguments():
+    parser = argparse.ArgumentParser(description='Specify IP and port number to connect')
+    parser.add_argument('-i', '--ip', type=str, help='IP address', required=True)
+    parser.add_argument('-p', '--port', type=int, help='Port number', required=True)
+    args = parser.parse_args()
+
+    return args.ip, args.port
+
+
 def main():
+    ip, port = get_arguments()
+
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         while True:
             try:
-                sock.connect(('127.0.0.1', 55555))
+                sock.connect((ip, port))
                 break
             except ConnectionRefusedError:
                 print('trying to connect ...')
