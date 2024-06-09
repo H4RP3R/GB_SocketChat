@@ -9,12 +9,12 @@ def listen(sock):
         data = sock.recv(1024)
         if data:
             msg = pickle.loads(data)
-            print(msg)
+            print(f'{msg["username"]}: {msg["text"]}')
 
 
 def write(sock, username):
     while True:
-        text = input('> ')
+        text = input()
         msg = {'username': username, 'text': text}
         sock.sendall(pickle.dumps(msg))
 
@@ -32,6 +32,7 @@ def main():
                 sleep(5)
 
         username = input('Enter your name: ').strip()
+        print(f'Welcome, {username}!')
 
         writer = threading.Thread(target=write, args=(sock, username))
         writer.start()

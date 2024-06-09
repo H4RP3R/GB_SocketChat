@@ -14,6 +14,7 @@ def listen(conn, addr):
             data = conn.recv(1024)
             msg = pickle.loads(data)
             if data:
+                resend(msg, addr)
                 logger.info(f'{msg["username"]}: {msg["text"]}')
     except (ConnectionResetError, EOFError):
         logger.info(f'{addr} has disconnected')
@@ -22,8 +23,10 @@ def listen(conn, addr):
         logger.debug(f'Total connections: {len(connections)}')
 
 
-def resend(msg, conn):
-    pass
+def resend(msg, source_addr):
+    for a, c in connections.items():
+        if a != source_addr:
+            c.sendall(pickle.dumps(msg))
 
 
 def main():
