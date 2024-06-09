@@ -4,8 +4,8 @@
 # server
 sudo apt install python3-pip
 sudo apt install python3-venv
-cd GB_SocketChat
 git clone https://github.com/H4RP3R/GB_SocketChat.git
+cd GB_SocketChat
 python3 -m venv env
 source env/bin/activate
 ip install -r requirements.txt
