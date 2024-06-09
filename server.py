@@ -2,6 +2,7 @@ import socket
 import pickle
 import threading
 import sys
+import argparse
 from loguru import logger
 
 
@@ -30,10 +31,25 @@ def resend(msg, source_addr):
             c.sendall(pickle.dumps(msg))
 
 
+def get_arguments():
+    parser = argparse.ArgumentParser(description='Specify IP and port number for chat server')
+    parser.add_argument('-i', '--ip', type=str, help='IP address', required=True)
+    parser.add_argument('-p', '--port', type=int, help='Port number', required=True)
+    args = parser.parse_args()
+
+    return args.ip, args.port
+
+
 def main():
+    ip, port = get_arguments()
+
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.bind(('127.0.0.1', 55555))
-        sock.listen()
+        try:
+            sock.bind((ip, port))
+            sock.listen()
+        except Exception as e:
+            logger.error(e)
+            sys.exit(1)
         logger.info('Server is running, please, press ctrl+c to stop')
 
         while True:
@@ -49,5 +65,5 @@ if __name__ == '__main__':
     try:
         main()
     except KeyboardInterrupt:
-        print('\b\bBye!')
+        logger.info('Shutdown')
         sys.exit(0)
