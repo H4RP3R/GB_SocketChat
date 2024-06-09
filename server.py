@@ -1,6 +1,7 @@
 import socket
 import pickle
 import threading
+import sys
 from loguru import logger
 
 
@@ -44,4 +45,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print('\b\bBye!')
+        sys.exit(0)
